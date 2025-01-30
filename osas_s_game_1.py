@@ -1,6 +1,9 @@
 
 import pygame as pg
+from pygame.math import Vector2
 import random as rnd
+
+from pygame.sprite import collide_rect
 
 pg.init()
 ## sets the default screen size
@@ -10,50 +13,47 @@ screen = pg.display.set_mode(s_size)
 pg.display.set_caption('game :)')
 
 
-
-
 class Player():
     def __init__(self):
-        self.posx = 0
-        self.posy = 0
+        self.pos = Vector2(100,210)
         self.w = 40
         self.h = 60
         self.vel = 5
+        self.rect = pg.rect.Rect(self.pos.x,self.pos.y,self.w,self.h)
+
 
     def move(self): ## movement code stops at edge of screen
         keys = pg.key.get_pressed()
         
-        if keys[pg.K_DOWN] and self.posy <= 440: 
-            self.posy += self.vel
-        elif keys[pg.K_UP] and self.posy >= 0:
-            self.posy -= self.vel
-        elif keys[pg.K_LEFT] and self.posx >= 0:
-            self.posx -= self.vel
-        elif keys[pg.K_RIGHT] and self.posx <= 460:
-            self.posx += self.vel
+        if keys[pg.K_DOWN] and self.pos.y <= 440: 
+            self.pos.y += self.vel
+        elif keys[pg.K_UP] and self.pos.y >= 0:
+            self.pos.y -= self.vel
+        elif keys[pg.K_LEFT] and self.pos.x >= 0:
+            self.pos.x -= self.vel
+        elif keys[pg.K_RIGHT] and self.pos.x <= 460:
+            self.pos.x += self.vel
 
-    def drawRect(self):
-        obj = pg.rect.Rect(self.posx,self.posy,self.w,self.h)
-        pg.draw.rect(screen,'blue',obj)
+
+
+    def drawRect(self):## draw the rectangle with new position
+        self.rect = pg.rect.Rect(self.pos.x,self.pos.y,self.w,self.h)
+        pg.draw.rect(screen,'blue',self.rect)
 
 class Apple():
     def __init__(self):
-        self.posx = rnd.randint(0,500)
-        self.posy = rnd.randint(0,500)
-
+        self.pos = Vector2(350,210) 
         self.w = 20
         self.h = 20
         self.score = 1
+        self.rect = pg.rect.Rect(self.pos.x,self.pos.y,self.w,self.h)
 
-    def newPos(self):
-        self.posx = rnd.randint(0,500)
-        self.posy = rnd.randint(0,500)
-        self.drawRect()
+    def newPos(self):#randomly generate a new position in the screen
+        self.pos = Vector2(rnd.randint(0,500),rnd.randint(0,500))
         
-
     def drawRect(self):
-        obj = pg.rect.Rect(self.posx,self.posy,self.w,self.h)
-        pg.draw.rect(screen,'green',obj)
+        self.rect   = pg.rect.Rect(self.pos.x,self.pos.y,self.w,self.h)
+        pg.draw.rect(screen,'green',self.rect)
 
         
 #player behaviour
@@ -65,7 +65,8 @@ apple = Apple()
 #main game loop
 running = True
 while running:
-    pg.clock.tick(60)
+    score = 0 
+    pg.time.delay(15)    
     
     
     for event in pg.event.get():
@@ -73,11 +74,21 @@ while running:
             running = False
 
     p1.move()
+    
     screen.fill((0,0,0))
     p1.drawRect()
-    apple.newPos()
+    apple.drawRect()
+
+    if p1.rect.colliderect(apple.rect) == True:
+        apple.newPos()
+        score += 1
+       
     pg.display.update()
     
+    
+ 
+
+ 
     
  
 
