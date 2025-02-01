@@ -1,4 +1,3 @@
-
 import pygame as pg
 from pygame.math import Vector2
 import random as rnd
@@ -6,6 +5,7 @@ import random as rnd
 from pygame.sprite import collide_rect
 
 pg.init()
+pg.font.init()
 ## sets the default screen size
 s_size = (500,500) 
 screen = pg.display.set_mode(s_size)
@@ -45,7 +45,7 @@ class Apple():
         self.pos = Vector2(350,210) 
         self.w = 20
         self.h = 20
-        self.score = 1
+        self.score = 10
         self.rect = pg.rect.Rect(self.pos.x,self.pos.y,self.w,self.h)
 
     def newPos(self):#randomly generate a new position in the screen
@@ -55,7 +55,11 @@ class Apple():
         self.rect   = pg.rect.Rect(self.pos.x,self.pos.y,self.w,self.h)
         pg.draw.rect(screen,'green',self.rect)
 
-        
+score = 0 
+font = pg.font.Font(None, 36)
+
+
+
 #player behaviour
 p1 = Player()
 apple = Apple()
@@ -65,7 +69,6 @@ apple = Apple()
 #main game loop
 running = True
 while running:
-    score = 0 
     pg.time.delay(15)    
     
     
@@ -78,18 +81,14 @@ while running:
     screen.fill((0,0,0))
     p1.drawRect()
     apple.drawRect()
+    score_text = font.render(f'Score: {score}', True, (255, 255, 255))
+    screen.blit(score_text, (10, 10))
 
     if p1.rect.colliderect(apple.rect) == True:
         apple.newPos()
-        score += 1
+        score += apple.score
        
     pg.display.update()
-    
-    
- 
 
- 
-    
- 
 
- 
+
