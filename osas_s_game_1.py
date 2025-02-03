@@ -1,3 +1,4 @@
+
 import pygame as pg
 from pygame.math import Vector2
 import random as rnd
@@ -10,7 +11,7 @@ pg.font.init()
 s_size = (500,500) 
 screen = pg.display.set_mode(s_size)
 
-pg.display.set_caption('game :)')
+pg.display.set_caption('apple finder')
 
 
 class Player():
@@ -52,8 +53,29 @@ class Apple():
         self.pos = Vector2(rnd.randint(0,500),rnd.randint(0,500))
         
     def drawRect(self):
-        self.rect   = pg.rect.Rect(self.pos.x,self.pos.y,self.w,self.h)
+        self.rect = pg.rect.Rect(self.pos.x,self.pos.y,self.w,self.h)
         pg.draw.rect(screen,'green',self.rect)
+
+
+
+
+class KillBlock:
+    def __init__(self):
+        self.w = 20
+        self.h = 20
+        self.pos = Vector2(350,210) 
+        self.rect = pg.rect.Rect(self.pos.x,self.pos.y,self.w,self.h)
+
+    def newPos(self):#randomly generate a new position in the screen
+        self.pos = Vector2(rnd.randint(0,500),rnd.randint(0,500))
+        
+    def drawRect(self):
+        self.rect = pg.rect.Rect(self.pos.x,self.pos.y,self.w,self.h)
+        pg.draw.rect(screen,'red',self.rect)
+
+
+
+
 
 score = 0 
 font = pg.font.Font(None, 36)
@@ -64,6 +86,10 @@ font = pg.font.Font(None, 36)
 p1 = Player()
 apple = Apple()
 
+def collideApple():
+        if p1.rect.colliderect(apple.rect) == True:
+        apple.newPos()
+        score += apple.score
 
 
 #main game loop
@@ -84,11 +110,11 @@ while running:
     score_text = font.render(f'Score: {score}', True, (255, 255, 255))
     screen.blit(score_text, (10, 10))
 
-    if p1.rect.colliderect(apple.rect) == True:
-        apple.newPos()
-        score += apple.score
+
        
     pg.display.update()
+
+ 
 
 
 
